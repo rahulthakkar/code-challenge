@@ -29,12 +29,17 @@ public class Customer {
 	
 	
 	public Customer(String custID, Timestamp timestamp, String lastName, String city, String state) {
-		this.custID = custID;
+		this(custID);
 		this.createTime = timestamp;
 		this.lastUpdateTime = timestamp;
 		this.lastName = lastName;
 		this.city = city;
 		this.state = state;
+	}
+
+
+	public Customer(String custID) {
+		this.custID = custID;
 		this.siteVisits = new ArrayList<>();
 		this.images = new ArrayList<>();
 		this.orders = new HashMap<>();
@@ -48,6 +53,7 @@ public class Customer {
 		setState(state);
 	}
 	
+	//TODO change sequence timestamp compare
 	private void setTimeStamps(Timestamp timestamp) {
 		if(timestamp!=null){
 			if(this.createTime!=null){
@@ -80,5 +86,25 @@ public class Customer {
 			this.state = state;
 		}
 	}
+
+
+	public void addImage(Image image) {
+		images.add(image);
+		setTimeStamps(image.getTimestamp());
+	}
+
+	public void addSiteVisit(SiteVisit siteVisit) {
+		siteVisits.add(siteVisit);
+		setTimeStamps(siteVisit.getTimestamp());
+	}
+
+
+	@Override
+	public String toString() {
+		return "Customer [custID=" + custID + ", createTime=" + createTime + ", lastUpdateTime=" + lastUpdateTime
+				+ ", lastName=" + lastName + ", city=" + city + ", state=" + state + ", siteVisits=" + siteVisits
+				+ ", images=" + images + ", orders=" + orders + ", totalOrderAmount=" + totalOrderAmount + "]";
+	}
+
 	
 }

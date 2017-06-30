@@ -70,4 +70,13 @@ public class Order {
 		setCustID(custID);
 		setAmount(amount);
 	}
+
+
+	@Override
+	public String toString() {
+		return "Order [orderID=" + orderID + ", createTime=" + createTime + ", lastUpdateTime=" + lastUpdateTime
+				+ ", custID=" + custID + ", amount=" + amount + "]";
+	}
+	
+	
 }

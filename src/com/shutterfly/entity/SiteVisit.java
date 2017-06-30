@@ -16,5 +16,30 @@ public class SiteVisit {
 		this.custID = custID;
 		this.tags = tags;
 	}
-		
+
+
+	public String getPageID() {
+		return pageID;
+	}
+
+	public Timestamp getTimestamp() {
+		return timestamp;
+	}
+
+	public String getCustID() {
+		return custID;
+	}
+
+	public Map<String, String> getTags() {
+		return tags;
+	}
+
+
+	@Override
+	public String toString() {
+		return "SiteVisit [pageID=" + pageID + ", timestamp=" + timestamp + ", custID=" + custID + ", tags=" + tags
+				+ "]";
+	}	
+	
+	
 }
