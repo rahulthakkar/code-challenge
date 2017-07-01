@@ -1,18 +1,18 @@
 package com.shutterfly.entity;
 
-import java.sql.Timestamp;
+import org.joda.time.DateTime;
 
 public class Order {
 	private String orderID;
-	private Timestamp createTime;
-	private Timestamp lastUpdateTime;
+	private DateTime createTime;
+	private DateTime lastUpdateTime;
 	private String custID;
 	private double amount;
 	
-	public Order(String orderID, Timestamp timestamp, String custID, double amount) {
+	public Order(String orderID, DateTime dateTime, String custID, double amount) {
 		this.orderID = orderID;
-		this.createTime = timestamp;
-		this.lastUpdateTime = timestamp;
+		this.createTime = dateTime;
+		this.lastUpdateTime = dateTime;
 		this.custID = custID;
 		this.amount = amount;
 	}
@@ -22,11 +22,11 @@ public class Order {
 		return orderID;
 	}
 
-	public Timestamp getCreateTime() {
+	public DateTime getCreateTime() {
 		return createTime;
 	}
 
-	public Timestamp getLastUpdateTime() {
+	public DateTime getLastUpdateTime() {
 		return lastUpdateTime;
 	}
 
@@ -38,17 +38,17 @@ public class Order {
 		return amount;
 	}
 	
-	private void setTimeStamps(Timestamp timestamp) {
-		if(timestamp!=null){
+	private void setTimeStamps(DateTime dateTime) {
+		if(dateTime!=null){
 			if(this.createTime!=null){
-				if(this.createTime.after(timestamp)){
-					this.createTime = timestamp;
-				} else if(this.lastUpdateTime.before(timestamp)){
-					this.lastUpdateTime = timestamp;
+				if(dateTime.isBefore(this.createTime)){
+					this.createTime = dateTime;
+				} else if(dateTime.isAfter(this.lastUpdateTime)){
+					this.lastUpdateTime = dateTime;
 				}
 			} else {
-				this.createTime = timestamp;
-				this.lastUpdateTime = timestamp;
+				this.createTime = dateTime;
+				this.lastUpdateTime = dateTime;
 			}
 		}
 	}
@@ -65,10 +65,10 @@ public class Order {
 		}
 	}
 	
-	public void updateOrder(Timestamp timestamp, String custID, double amount) {
-		setTimeStamps(timestamp);
-		setCustID(custID);
-		setAmount(amount);
+	public void updateOrder(Order order) {
+		setTimeStamps(order.getCreateTime());
+		setCustID(order.getCustID());
+		setAmount(order.getAmount());
 	}
 
 

@@ -1,18 +1,19 @@
 package com.shutterfly.entity;
 
-import java.sql.Timestamp;
 import java.util.Map;
+
+import org.joda.time.DateTime;
 
 public class SiteVisit {
 	private String pageID;
-	private Timestamp timestamp;
+	private DateTime dateTime;
 	private String custID;
 	private Map<String, String> tags;
 	
 	
-	public SiteVisit(String pageID, Timestamp timestamp, String custID, Map<String, String> tags) {
+	public SiteVisit(String pageID, DateTime dateTime, String custID, Map<String, String> tags) {
 		this.pageID = pageID;
-		this.timestamp = timestamp;
+		this.dateTime = dateTime;
 		this.custID = custID;
 		this.tags = tags;
 	}
@@ -22,8 +23,8 @@ public class SiteVisit {
 		return pageID;
 	}
 
-	public Timestamp getTimestamp() {
-		return timestamp;
+	public DateTime getDateTime() {
+		return dateTime;
 	}
 
 	public String getCustID() {
@@ -37,7 +38,7 @@ public class SiteVisit {
 
 	@Override
 	public String toString() {
-		return "SiteVisit [pageID=" + pageID + ", timestamp=" + timestamp + ", custID=" + custID + ", tags=" + tags
+		return "SiteVisit [pageID=" + pageID + ", dateTime=" + dateTime + ", custID=" + custID + ", tags=" + tags
 				+ "]";
 	}	
 	

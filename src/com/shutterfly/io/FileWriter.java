@@ -3,18 +3,20 @@ package com.shutterfly.io;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.Map;
+import java.util.ArrayDeque;
 
-public class MapFileWriter {
+import com.shutterfly.entity.Customer;
 
-	public void write(Map<String, Double> topXCust, String outputDir) {
+public class FileWriter {
+
+	public void write(ArrayDeque<Customer> topXCust, String outputDir) {
 		File dir = new File(outputDir);
 		File outputFile = new File(dir, "output_"+System.currentTimeMillis()+".txt");
 		
 		try {
 			PrintWriter writer = new PrintWriter(outputFile);
-			for(Map.Entry<String, Double> entry : topXCust.entrySet()) {
-				writer.write(entry.getKey() +"-->"+ entry.getValue());
+			for(Customer customer : topXCust) {
+				writer.write(customer.getCustID() +"-->"+ customer.getAvgAmountPerWeek());
 			}
 			writer.close();
 		} catch (FileNotFoundException e) {

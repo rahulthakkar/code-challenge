@@ -1,15 +1,17 @@
 package com.shutterfly.entity;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.Weeks;
+
 public class Customer {
 	private String custID;
-	private Timestamp createTime;
-	private Timestamp lastUpdateTime;
+	private DateTime createTime;
+	private DateTime lastUpdateTime;
 	private String lastName;
 	private String city;
 	private String state;
@@ -17,26 +19,16 @@ public class Customer {
 	private List<Image> images;
 	private Map<String, Order> orders;
 	private double totalOrderAmount;
+	private double avgAmountPerWeek;
 	
-	//TODO
-	public boolean updateOrder(Order order) {
-		if(order==null || custID!=order.getCustID() || !orders.containsKey(order.getOrderID())) {
-			return false;
-		}
-		totalOrderAmount += 0; 
-		return true;
-	}
-	
-	
-	public Customer(String custID, Timestamp timestamp, String lastName, String city, String state) {
+	public Customer(String custID, DateTime dateTime, String lastName, String city, String state) {
 		this(custID);
-		this.createTime = timestamp;
-		this.lastUpdateTime = timestamp;
+		this.createTime = dateTime;
+		this.lastUpdateTime = dateTime;
 		this.lastName = lastName;
 		this.city = city;
 		this.state = state;
 	}
-
 
 	public Customer(String custID) {
 		this.custID = custID;
@@ -45,28 +37,64 @@ public class Customer {
 		this.orders = new HashMap<>();
 	}
 
-
-	public void updateCustomer(Timestamp timestamp, String lastName, String city, String state) {
-		setTimeStamps(timestamp);
+	public void updateCustomer(DateTime dateTime, String lastName, String city, String state) {
+		setTimeStamps(dateTime);
 		setLastName(lastName);
 		setCity(city);
 		setState(state);
 	}
 	
-	//TODO change sequence timestamp compare
-	private void setTimeStamps(Timestamp timestamp) {
-		if(timestamp!=null){
+	private void setTimeStamps(DateTime dateTime) {
+		if(dateTime!=null){
 			if(this.createTime!=null){
-				if(this.createTime.after(timestamp)){
-					this.createTime = timestamp;
-				} else if(this.lastUpdateTime.before(timestamp)){
-					this.lastUpdateTime = timestamp;
+				if(dateTime.isBefore(this.createTime)){
+					this.createTime = dateTime;
+				} else if(dateTime.isAfter(this.lastUpdateTime)){
+					this.lastUpdateTime = dateTime;
 				}
 			} else {
-				this.createTime = timestamp;
-				this.lastUpdateTime = timestamp;
+				this.createTime = dateTime;
+				this.lastUpdateTime = dateTime;
 			}
 		}
+	}
+	
+	public void addOrder(Order order) {
+		if(orders.containsKey(order.getOrderID())) {
+			updateOrder(order);
+		} else {
+			orders.put(order.getOrderID(), order);
+			totalOrderAmount += order.getAmount();
+		}
+		setTimeStamps(order.getCreateTime());
+		setTimeStamps(order.getLastUpdateTime());
+	}
+
+	private boolean updateOrder(Order order) {
+		if(order==null || custID!=order.getCustID() || !orders.containsKey(order.getOrderID())) {
+			return false;
+		}
+		Order oldOrder = orders.get(order.getOrderID());
+		totalOrderAmount += (order.getAmount() - oldOrder.getAmount());
+		oldOrder.updateOrder(order);
+		return true;
+	}
+	
+	public double getAvgAmountPerWeek(DateTime endTime) {
+		if(createTime==null || endTime==null || createTime.isAfter(endTime)){
+			return 0.0;
+		}
+		
+		int weeks = Weeks.weeksBetween(createTime, endTime).getWeeks();
+		if(weeks==0){
+			weeks=1;
+		}
+		avgAmountPerWeek =  totalOrderAmount/(1.0*weeks);
+		return avgAmountPerWeek;
+	}
+	
+	public double getAvgAmountPerWeek() {
+		return avgAmountPerWeek;
 	}
 	
 	private void setLastName(String lastName) {
@@ -74,7 +102,7 @@ public class Customer {
 			this.lastName = lastName;
 		}
 	}
-	
+
 	private void setCity(String city) {
 		if(city!=null && !city.trim().isEmpty()) {
 			this.city = city;
@@ -90,14 +118,62 @@ public class Customer {
 
 	public void addImage(Image image) {
 		images.add(image);
-		setTimeStamps(image.getTimestamp());
+		setTimeStamps(image.getDateTime());
 	}
 
 	public void addSiteVisit(SiteVisit siteVisit) {
 		siteVisits.add(siteVisit);
-		setTimeStamps(siteVisit.getTimestamp());
+		setTimeStamps(siteVisit.getDateTime());
 	}
 
+	public String getCustID() {
+		return custID;
+	}
+
+
+	public DateTime getCreateTime() {
+		return createTime;
+	}
+
+
+	public DateTime getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
+
+	public String getLastName() {
+		return lastName;
+	}
+
+
+	public String getCity() {
+		return city;
+	}
+
+
+	public String getState() {
+		return state;
+	}
+
+
+	public List<SiteVisit> getSiteVisits() {
+		return siteVisits;
+	}
+
+
+	public List<Image> getImages() {
+		return images;
+	}
+
+
+	public Map<String, Order> getOrders() {
+		return orders;
+	}
+
+
+	public double getTotalOrderAmount() {
+		return totalOrderAmount;
+	}
 
 	@Override
 	public String toString() {
@@ -106,5 +182,4 @@ public class Customer {
 				+ ", images=" + images + ", orders=" + orders + ", totalOrderAmount=" + totalOrderAmount + "]";
 	}
 
-	
 }

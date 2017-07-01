@@ -1,17 +1,17 @@
 package com.shutterfly.entity;
 
-import java.sql.Timestamp;
+import org.joda.time.DateTime;
 
 public class Image {
 	private String imageID;
-	private Timestamp timestamp;
+	private DateTime dateTime;
 	private String custID;
 	private String cameraMake;
 	private String cameraModel;
 	
-	public Image(String imageID, Timestamp timestamp, String custID, String cameraMake, String cameraModel) {
+	public Image(String imageID, DateTime dateTime, String custID, String cameraMake, String cameraModel) {
 		this.imageID = imageID;
-		this.timestamp = timestamp;
+		this.dateTime = dateTime;
 		this.custID = custID;
 		this.cameraMake = cameraMake;
 		this.cameraModel = cameraModel;
@@ -21,8 +21,8 @@ public class Image {
 		return imageID;
 	}
 
-	public Timestamp getTimestamp() {
-		return timestamp;
+	public DateTime getDateTime() {
+		return dateTime;
 	}
 
 	public String getCustID() {
@@ -39,7 +39,7 @@ public class Image {
 
 	@Override
 	public String toString() {
-		return "Image [imageID=" + imageID + ", timestamp=" + timestamp + ", custID=" + custID + ", cameraMake="
+		return "Image [imageID=" + imageID + ", dateTime=" + dateTime + ", custID=" + custID + ", cameraMake="
 				+ cameraMake + ", cameraModel=" + cameraModel + "]";
 	}
 	
