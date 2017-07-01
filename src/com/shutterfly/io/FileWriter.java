@@ -16,7 +16,7 @@ public class FileWriter {
 		try {
 			PrintWriter writer = new PrintWriter(outputFile);
 			for(Customer customer : topXCust) {
-				writer.write(customer.getCustID() +"-->"+ customer.getAvgAmountPerWeek());
+				writer.write(customer.getKey() +"-->"+ customer.getAvgAmountPerWeek());
 			}
 			writer.close();
 		} catch (FileNotFoundException e) {

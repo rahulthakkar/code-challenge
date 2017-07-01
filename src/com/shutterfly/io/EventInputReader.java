@@ -12,6 +12,7 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 import com.shutterfly.entity.Data;
+import com.shutterfly.entity.EventEntity;
 
 
 public class EventInputReader {
@@ -28,7 +29,10 @@ public class EventInputReader {
 			
 			for(JsonValue value : jsonArray) {
 				JsonObject obj = (JsonObject) value;
-				data.ingest(obj);
+				EventEntity event = EventEntityFactory.getEvent(obj);
+				if(event!=null) {
+					event.ingest(data);
+				}
 			}
 			
 		} catch (FileNotFoundException e) {

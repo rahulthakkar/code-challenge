@@ -8,10 +8,8 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 
-public class Customer {
-	private String custID;
-	private DateTime createTime;
-	private DateTime lastUpdateTime;
+public class Customer extends UpdatableEventEntity {
+	
 	private String lastName;
 	private String city;
 	private String state;
@@ -21,49 +19,39 @@ public class Customer {
 	private double totalOrderAmount;
 	private double avgAmountPerWeek;
 	
-	public Customer(String custID, DateTime dateTime, String lastName, String city, String state) {
-		this(custID);
-		this.createTime = dateTime;
-		this.lastUpdateTime = dateTime;
+	public Customer(String key, DateTime dateTime, String lastName, String city, String state) {
+		this(key, dateTime);
 		this.lastName = lastName;
 		this.city = city;
 		this.state = state;
 	}
 
-	public Customer(String custID) {
-		this.custID = custID;
+	// Construct Customer if Order belonging to this customer comes before Customer creation
+	public Customer(String key, DateTime dateTime) {
+		super(key, dateTime);
 		this.siteVisits = new ArrayList<>();
 		this.images = new ArrayList<>();
 		this.orders = new HashMap<>();
 	}
 
-	public void updateCustomer(DateTime dateTime, String lastName, String city, String state) {
-		setTimeStamps(dateTime);
+	public void updateCustomer(DateTime createTime, DateTime lastUpdateTime, String lastName, String city, String state) {
+		setTimeStamps(createTime);
+		setTimeStamps(lastUpdateTime);
 		setLastName(lastName);
 		setCity(city);
 		setState(state);
 	}
 	
 	private void setTimeStamps(DateTime dateTime) {
-		if(dateTime!=null){
-			if(this.createTime!=null){
-				if(dateTime.isBefore(this.createTime)){
-					this.createTime = dateTime;
-				} else if(dateTime.isAfter(this.lastUpdateTime)){
-					this.lastUpdateTime = dateTime;
-				}
-			} else {
-				this.createTime = dateTime;
-				this.lastUpdateTime = dateTime;
-			}
-		}
+		setCreateTime(dateTime);
+		setLastUpdateTime(dateTime);
 	}
 	
 	public void addOrder(Order order) {
-		if(orders.containsKey(order.getOrderID())) {
+		if(orders.containsKey(order.getKey())) {
 			updateOrder(order);
 		} else {
-			orders.put(order.getOrderID(), order);
+			orders.put(order.getKey(), order);
 			totalOrderAmount += order.getAmount();
 		}
 		setTimeStamps(order.getCreateTime());
@@ -71,21 +59,21 @@ public class Customer {
 	}
 
 	private boolean updateOrder(Order order) {
-		if(order==null || custID!=order.getCustID() || !orders.containsKey(order.getOrderID())) {
+		if(order==null || getKey()!=order.getCustID() || !orders.containsKey(order.getKey())) {
 			return false;
 		}
-		Order oldOrder = orders.get(order.getOrderID());
+		Order oldOrder = orders.get(order.getKey());
 		totalOrderAmount += (order.getAmount() - oldOrder.getAmount());
 		oldOrder.updateOrder(order);
 		return true;
 	}
 	
 	public double getAvgAmountPerWeek(DateTime endTime) {
-		if(createTime==null || endTime==null || createTime.isAfter(endTime)){
+		if(getCreateTime()==null || endTime==null || getCreateTime().isAfter(endTime)){
 			return 0.0;
 		}
 		
-		int weeks = Weeks.weeksBetween(createTime, endTime).getWeeks();
+		int weeks = Weeks.weeksBetween(getCreateTime(), endTime).getWeeks();
 		if(weeks==0){
 			weeks=1;
 		}
@@ -118,28 +106,13 @@ public class Customer {
 
 	public void addImage(Image image) {
 		images.add(image);
-		setTimeStamps(image.getDateTime());
+		setTimeStamps(image.getCreateTime());
 	}
 
 	public void addSiteVisit(SiteVisit siteVisit) {
 		siteVisits.add(siteVisit);
-		setTimeStamps(siteVisit.getDateTime());
+		setTimeStamps(siteVisit.getCreateTime());
 	}
-
-	public String getCustID() {
-		return custID;
-	}
-
-
-	public DateTime getCreateTime() {
-		return createTime;
-	}
-
-
-	public DateTime getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-
 
 	public String getLastName() {
 		return lastName;
@@ -177,9 +150,23 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer [custID=" + custID + ", createTime=" + createTime + ", lastUpdateTime=" + lastUpdateTime
+		return "Customer [custID=" + getKey() + ", createTime=" + getCreateTime() + ", lastUpdateTime=" + getLastUpdateTime()
 				+ ", lastName=" + lastName + ", city=" + city + ", state=" + state + ", siteVisits=" + siteVisits
 				+ ", images=" + images + ", orders=" + orders + ", totalOrderAmount=" + totalOrderAmount + "]";
+	}
+
+	@Override
+	public boolean ingest(Data data) {
+		Customer customer = data.getCustomerByID(getKey());
+		if (customer == null) {
+			data.addCustomer(customer);
+		} else {
+			customer.updateCustomer(getCreateTime(), getLastUpdateTime(), lastName, city, state);
+		}
+
+		data.updateTimestamps(getCreateTime());
+		data.updateTimestamps(getLastUpdateTime());
+		return true;
 	}
 
 }

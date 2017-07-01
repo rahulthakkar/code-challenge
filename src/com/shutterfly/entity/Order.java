@@ -2,34 +2,16 @@ package com.shutterfly.entity;
 
 import org.joda.time.DateTime;
 
-public class Order {
-	private String orderID;
-	private DateTime createTime;
-	private DateTime lastUpdateTime;
+public class Order extends UpdatableEventEntity{
 	private String custID;
 	private double amount;
 	
-	public Order(String orderID, DateTime dateTime, String custID, double amount) {
-		this.orderID = orderID;
-		this.createTime = dateTime;
-		this.lastUpdateTime = dateTime;
+	public Order(String key, DateTime dateTime, String custID, double amount) {
+		super(key, dateTime);
 		this.custID = custID;
 		this.amount = amount;
 	}
 	
-	
-	public String getOrderID() {
-		return orderID;
-	}
-
-	public DateTime getCreateTime() {
-		return createTime;
-	}
-
-	public DateTime getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-
 	public String getCustID() {
 		return custID;
 	}
@@ -39,18 +21,8 @@ public class Order {
 	}
 	
 	private void setTimeStamps(DateTime dateTime) {
-		if(dateTime!=null){
-			if(this.createTime!=null){
-				if(dateTime.isBefore(this.createTime)){
-					this.createTime = dateTime;
-				} else if(dateTime.isAfter(this.lastUpdateTime)){
-					this.lastUpdateTime = dateTime;
-				}
-			} else {
-				this.createTime = dateTime;
-				this.lastUpdateTime = dateTime;
-			}
-		}
+		setCreateTime(dateTime);
+		setLastUpdateTime(dateTime);
 	}
 	
 	private void setCustID(String custID) {
@@ -74,8 +46,18 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "Order [orderID=" + orderID + ", createTime=" + createTime + ", lastUpdateTime=" + lastUpdateTime
+		return "Order [orderID=" + getKey() + ", createTime=" + getCreateTime() + ", lastUpdateTime=" + getLastUpdateTime()
 				+ ", custID=" + custID + ", amount=" + amount + "]";
+	}
+
+
+	@Override
+	public boolean ingest(Data data) {
+		Customer customer = data.getCustomerByID(custID, getCreateTime());
+		customer.addOrder(this);
+		data.updateTimestamps(getCreateTime());
+		data.updateTimestamps(getLastUpdateTime());
+		return true;
 	}
 	
 	
