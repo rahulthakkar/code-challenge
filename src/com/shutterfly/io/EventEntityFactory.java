@@ -3,6 +3,8 @@ package com.shutterfly.io;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -20,6 +22,8 @@ import com.shutterfly.utility.Constants;
 
 public class EventEntityFactory {
 
+	private static final Logger LOGGER = Logger.getLogger(EventEntityFactory.class.getName());
+	
 	public static EventEntity getEvent(JsonObject obj) {
 		String eventType = obj.getString(Constants.TYPE_KEY, "");
 
@@ -36,7 +40,7 @@ public class EventEntityFactory {
 		case Constants.EVENT_TYPE_ORDER:
 			return getOrder(obj);
 		default:
-			// TODO - LOG
+			LOGGER.log(Level.WARNING, "Cant handle events with type {0}", eventType);
 			return null;
 		}
 	}
@@ -53,7 +57,7 @@ public class EventEntityFactory {
 		double amount = Double.parseDouble(obj.getString(Constants.TOTAL_AMOUNT_KEY, "0.0").replaceAll("[^\\d.]", ""));
 
 		if ("".equals(orderID)) {
-			// TODO log
+			LOGGER.log(Level.WARNING, "Cant parse the orderID in JSONObj {0}", obj.toString());
 			return null;
 		}
 
@@ -73,7 +77,7 @@ public class EventEntityFactory {
 		String cameraModel = obj.getString(Constants.CAMERA_MODEL_KEY, "");
 
 		if ("".equals(imageID)) {
-			// TODO log
+			LOGGER.log(Level.WARNING, "Cant parse the imageID in JSONObj {0}", obj.toString());
 			return null;
 		}
 
@@ -92,7 +96,7 @@ public class EventEntityFactory {
 		JsonArray tagsArray = obj.getJsonArray(Constants.TAGS_KEY);
 
 		if ("".equals(pageID)) {
-			// TODO log
+			LOGGER.log(Level.WARNING, "Cant parse the pageID in JSONObj {0}", obj.toString());
 			return null;
 		}
 
@@ -122,7 +126,7 @@ public class EventEntityFactory {
 		String state = obj.getString(Constants.ADR_STATE_KEY, "");
 
 		if ("".equals(custID)) {
-			// TODO log
+			LOGGER.log(Level.WARNING, "Cant parse the custID in JSONObj {0}", obj.toString());
 			return null;
 		}
 

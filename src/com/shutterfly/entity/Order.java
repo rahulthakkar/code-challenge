@@ -51,6 +51,9 @@ public class Order extends UpdatableEventEntity{
 	}
 
 
+	/*
+	 * Ingests 'this' event in the given data
+	 */
 	@Override
 	public boolean ingest(Data data) {
 		Customer customer = data.getCustomerByID(custID, getCreateTime());

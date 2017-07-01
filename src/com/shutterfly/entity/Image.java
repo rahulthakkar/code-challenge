@@ -32,7 +32,10 @@ public class Image extends EventEntity {
 		return "Image [imageID=" + getKey() + ", dateTime=" + getCreateTime() + ", custID=" + custID + ", cameraMake="
 				+ cameraMake + ", cameraModel=" + cameraModel + "]";
 	}
-
+	
+	/*
+	 * Ingests 'this' event in the given data
+	 */
 	@Override
 	public boolean ingest(Data data) {
 		Customer customer = data.getCustomerByID(custID, getCreateTime());

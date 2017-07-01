@@ -11,6 +11,9 @@ public abstract class EventEntity {
 		this.createTime = createTime;
 	}
 	
+	/*
+	 * Ingests 'this' event in the given data
+	 */
 	abstract public boolean ingest(Data data);
 
 	public String getKey() {

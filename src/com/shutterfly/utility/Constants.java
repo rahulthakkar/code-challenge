@@ -22,5 +22,6 @@ public class Constants {
 	public final static String CAMERA_MAKE_KEY = "camera_make";
 	public final static String CAMERA_MODEL_KEY = "camera_model";
 	public final static String TOTAL_AMOUNT_KEY = "total_amount";
-
+	public final static int NUM_WEEKS_IN_YEAR = 52;
+	public final static int AVG_CUST_LIFESPAN_YEARS = 10;
 }

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -17,9 +19,12 @@ import com.shutterfly.entity.EventEntity;
 
 public class EventInputReader {
 	
-	public Data populateEvents(String path) {
-		Data data = new Data();
+	private static final Logger LOGGER = Logger.getLogger(EventInputReader.class.getName());
+
+	public Data populateEvents(String path) throws FileNotFoundException {
+		LOGGER.log(Level.INFO, "Starting the data ingestion");
 		
+		Data data = new Data();
 		File inputFile = new File(path);
 		InputStream inputStream;
 		try {
@@ -35,9 +40,10 @@ public class EventInputReader {
 				}
 			}
 			
+			LOGGER.log(Level.INFO, "Finished ingesting the data");
 		} catch (FileNotFoundException e) {
-			// TODO: handle exception
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.toString(), e);
+			throw e;
 		}
 		
 		return data;

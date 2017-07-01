@@ -30,7 +30,9 @@ public class SiteVisit extends EventEntity{
 				+ "]";
 	}
 
-
+	/*
+	 * Ingests 'this' event in the given data
+	 */
 	@Override
 	public boolean ingest(Data data) {
 		Customer customer = data.getCustomerByID(custID, getCreateTime());
