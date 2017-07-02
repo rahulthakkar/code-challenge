@@ -1,1 +1,13 @@
-Your source files reside in this directory
+Performance: 
+
+- The ingestion of an event is quick it's O(1) 
+- The call to top(x) with a Data of n customer is of O(n*logx)
+	I have used heap of size x to sort the data each time top x is called and this is required as 
+	the start time for each customer is separate so maintaining order just based on totalAmountSpent
+	wouldn't work.
+
+
+Assumptions:
+
+- CusromerID for order doesn't change in update
+- All amounts are in same currency, all are valid amounts and they are non-negative

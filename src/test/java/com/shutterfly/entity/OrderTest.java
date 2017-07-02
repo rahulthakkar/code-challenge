@@ -52,5 +52,26 @@ public class OrderTest {
 		assertEquals(newAmount, oldOrder.getAmount(), 0.0001);
 		assertEquals(oldCustomerTotalOrderAmount - oldAmount + newAmount, customer.getTotalOrderAmount(), 0.0001);
 	}
+	
+	@Test
+	public void ingestOrderOldUpdate() {
+		Customer customer = data.getCustomerByID("96f55c7d8f42");
+		Order oldOrder = customer.getOrders().get("68d84e5d1a43");
+		
+		double newAmount = 100.0;
+		double oldAmount = oldOrder.getAmount();
+		double oldCustomerTotalOrderAmount = customer.getTotalOrderAmount(); 
+		
+		Order updatedOrder = new Order(oldOrder.getKey(), oldOrder.getLastUpdateTime().plusMinutes(1), oldOrder.getCustID(), newAmount);
+		updatedOrder.ingest(data);
+		
+		Order oldUpdatedOrder = new Order(oldOrder.getKey(), oldOrder.getLastUpdateTime().minusSeconds(30), oldOrder.getCustID(), 1000.0);
+		oldUpdatedOrder.ingest(data);
+		
+		
+		assertEquals(updatedOrder.getLastUpdateTime(), oldOrder.getLastUpdateTime());
+		assertEquals(newAmount, oldOrder.getAmount(), 0.0001);
+		assertEquals(oldCustomerTotalOrderAmount - oldAmount + newAmount, customer.getTotalOrderAmount(), 0.0001);
+	}
 
 }
