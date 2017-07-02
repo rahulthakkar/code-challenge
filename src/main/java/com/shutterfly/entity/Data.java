@@ -113,4 +113,22 @@ public class Data {
 
 		return topx;
 	}
+
+	public Map<String, Customer> getCustomers() {
+		return customers;
+	}
+
+	public DateTime getDataCollectionStart() {
+		return dataCollectionStart;
+	}
+
+	public DateTime getDataCollectionEnd() {
+		return dataCollectionEnd;
+	}
+
+	public ArrayDeque<Customer> getTopx() {
+		return topx;
+	}
+	
+	
 }

@@ -61,7 +61,7 @@ public class Customer extends UpdatableEventEntity {
 	}
 
 	private boolean updateOrder(Order order) {
-		if (order == null || getKey() != order.getCustID() || !orders.containsKey(order.getKey())) {
+		if (order == null || !getKey().equals(order.getCustID()) || !orders.containsKey(order.getKey())) {
 			return false;
 		}
 		Order oldOrder = orders.get(order.getKey());

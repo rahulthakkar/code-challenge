@@ -28,7 +28,8 @@ public class FileWriter {
 									* Constants.AVG_CUST_LIFESPAN_YEARS 
 									* Constants.NUM_WEEKS_IN_YEAR;
 				
-				writer.println(customer.getKey() + ", " + simpleLTV);
+				writer.println(customer.getKey() +", " +simpleLTV+", "+customer.getAvgAmountPerWeek());
+				System.out.println(customer.getKey() +", " +simpleLTV+", "+customer.getAvgAmountPerWeek());
 			}
 			writer.close();
 			LOGGER.log(Level.INFO, "Finished writing to the file {0}", outputFile.getName());
